@@ -122,7 +122,7 @@ extern "C" LLVM_ABI LLVM_EXTERNAL_VISIBILITY void LLVMInitializeARMTarget() {
 static std::unique_ptr<TargetLoweringObjectFile> createTLOF(const Triple &TT) {
   if (TT.isOSBinFormatMachO())
     return std::make_unique<TargetLoweringObjectFileMachO>();
-  if (TT.isOSWindows())
+  if (TT.isOSBinFormatCOFF())
     return std::make_unique<TargetLoweringObjectFileCOFF>();
   return std::make_unique<ARMElfTargetObjectFile>();
 }

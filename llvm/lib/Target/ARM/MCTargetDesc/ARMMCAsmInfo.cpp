@@ -136,6 +136,25 @@ ARMCOFFMCAsmInfoMicrosoft::ARMCOFFMCAsmInfoMicrosoft(
   initializeAtSpecifiers(atSpecifiers);
 }
 
+void ARMCOFFMCAsmInfoWinCE::anchor() { }
+
+ARMCOFFMCAsmInfoWinCE::ARMCOFFMCAsmInfoWinCE(const MCTargetOptions &Options)
+    : MCAsmInfoGNUCOFF(Options) {
+  AlignmentIsInBytes = false;
+  HasSingleParameterDotFile = true;
+
+  CommentString = "@";
+  InternalSymbolPrefix = ".L";
+
+  SupportsDebugInformation = true;
+  ExceptionsType = ExceptionHandling::None;
+  DwarfRegNumForCFI = false;
+
+  initializeAtSpecifiers(atSpecifiers);
+  UseAtForSpecifier = false;
+  UseParensForSpecifier = true;
+}
+
 void ARMCOFFMCAsmInfoGNU::anchor() { }
 
 ARMCOFFMCAsmInfoGNU::ARMCOFFMCAsmInfoGNU(const MCTargetOptions &Options)

@@ -2572,6 +2572,8 @@ bool Triple::isValidVersionForOS(OSType OSKind, const VersionTuple &Version) {
 }
 
 ExceptionHandling Triple::getDefaultExceptionHandling() const {
+  if (isOSBinFormatCOFF() && isWinCE())
+    return ExceptionHandling::None;
   if (isOSBinFormatCOFF()) {
     if (getArch() == Triple::x86 &&
         (isOSCygMing() || isWindowsItaniumEnvironment()))

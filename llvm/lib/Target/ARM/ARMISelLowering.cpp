@@ -2546,8 +2546,9 @@ ARMTargetLowering::LowerCall(TargetLowering::CallLoweringInfo &CLI,
             MachineMemOperand::MODereferenceable |
                 MachineMemOperand::MOInvariant);
       } else if (Subtarget->isTargetCOFF()) {
-        assert(Subtarget->isTargetWindows() &&
-               "Windows is the only supported COFF target");
+        assert((Subtarget->isTargetWindows() ||
+                Subtarget->getTargetTriple().isWinCE()) &&
+               "Windows and Windows CE are the only supported COFF targets");
         unsigned TargetFlags = ARMII::MO_NO_FLAG;
         if (GVal->hasDLLImportStorageClass())
           TargetFlags = ARMII::MO_DLLIMPORT;
@@ -3680,6 +3681,8 @@ SDValue ARMTargetLowering::LowerGlobalAddress(SDValue Op,
   switch (Subtarget->getTargetTriple().getObjectFormat()) {
   default: llvm_unreachable("unknown object format");
   case Triple::COFF:
+    if (Subtarget->getTargetTriple().isWinCE())
+      return LowerGlobalAddressWinCE(Op, DAG);
     return LowerGlobalAddressWindows(Op, DAG);
   case Triple::ELF:
     return LowerGlobalAddressELF(Op, DAG);
@@ -3776,6 +3779,23 @@ SDValue ARMTargetLowering::LowerGlobalAddressDarwin(SDValue Op,
 
   if (Subtarget->isGVIndirectSymbol(GV))
     Result = DAG.getLoad(PtrVT, dl, DAG.getEntryNode(), Result,
+                         MachinePointerInfo::getGOT(DAG.getMachineFunction()));
+  return Result;
+}
+
+SDValue ARMTargetLowering::LowerGlobalAddressWinCE(SDValue Op,
+                                                   SelectionDAG &DAG) const {
+  const GlobalValue *GV = cast<GlobalAddressSDNode>(Op)->getGlobal();
+  ARMII::TOF TargetFlags = GV->hasDLLImportStorageClass() ? ARMII::MO_DLLIMPORT
+                                                          : ARMII::MO_NO_FLAG;
+  EVT PtrVT = getPointerTy(DAG.getDataLayout());
+  SDLoc DL(Op);
+  SDValue Result =
+      DAG.getNode(ARMISD::Wrapper, DL, PtrVT,
+                  DAG.getTargetGlobalAddress(GV, DL, PtrVT, /*offset=*/0,
+                                             TargetFlags));
+  if (TargetFlags & ARMII::MO_DLLIMPORT)
+    Result = DAG.getLoad(PtrVT, DL, DAG.getEntryNode(), Result,
                          MachinePointerInfo::getGOT(DAG.getMachineFunction()));
   return Result;
 }

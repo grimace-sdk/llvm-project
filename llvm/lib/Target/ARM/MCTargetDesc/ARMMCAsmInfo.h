@@ -89,6 +89,21 @@ public:
   }
 };
 
+class ARMCOFFMCAsmInfoWinCE : public MCAsmInfoGNUCOFF {
+  void anchor() override;
+
+public:
+  explicit ARMCOFFMCAsmInfoWinCE(const MCTargetOptions &Options);
+  void printSpecifierExpr(raw_ostream &OS,
+                          const MCSpecifierExpr &Expr) const override {
+    ARM::printSpecifierExpr(*this, OS, Expr);
+  }
+  bool evaluateAsRelocatableImpl(const MCSpecifierExpr &, MCValue &,
+                                 const MCAssembler *) const override {
+    return false;
+  }
+};
+
 namespace ARM {
 using Specifier = uint16_t;
 enum {

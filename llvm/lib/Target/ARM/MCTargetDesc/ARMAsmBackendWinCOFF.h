@@ -15,12 +15,15 @@
 namespace llvm {
 class ARMAsmBackendWinCOFF : public ARMAsmBackend {
 public:
-  ARMAsmBackendWinCOFF(const Target &T)
-      : ARMAsmBackend(T, llvm::endianness::little) {}
+  ARMAsmBackendWinCOFF(const Target &T, bool WinCE)
+      : ARMAsmBackend(T, llvm::endianness::little), WinCE(WinCE) {}
   std::unique_ptr<MCObjectTargetWriter>
   createObjectTargetWriter() const override {
-    return createARMWinCOFFObjectWriter();
+    return createARMWinCOFFObjectWriter(WinCE);
   }
+
+private:
+  bool WinCE;
 };
 } // namespace llvm
 

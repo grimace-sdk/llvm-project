@@ -950,7 +950,8 @@ MCSymbol *ARMAsmPrinter::GetARMGVSymbol(const GlobalValue *GV,
                                                    !GV->hasInternalLinkage());
     return MCSym;
   } else if (TT.isOSBinFormatCOFF()) {
-    assert(TT.isOSWindows() && "Windows is the only supported COFF target");
+    assert((TT.isOSWindows() || TT.isWinCE()) &&
+           "Windows and Windows CE are the only supported COFF targets");
 
     bool IsIndirect =
         (TargetFlags & (ARMII::MO_DLLIMPORT | ARMII::MO_COFFSTUB));

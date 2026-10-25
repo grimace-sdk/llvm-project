@@ -1344,7 +1344,9 @@ public:
   LLVM_ABI unsigned getDefaultWCharSize() const;
 
   /// Tests if the environment supports dllimport/export annotations.
-  bool hasDLLImportExport() const { return isOSWindows() || isPS(); }
+  bool hasDLLImportExport() const {
+    return isOSWindows() || isPS() || (isWinCE() && isOSBinFormatCOFF());
+  }
 
   /// @}
   /// @name Mutators

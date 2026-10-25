@@ -567,6 +567,13 @@ unsigned ARMAsmBackend::adjustFixupValue(const MCAssembler &Asm,
   case ARM::fixup_arm_uncondbl:
   case ARM::fixup_arm_condbl:
   case ARM::fixup_arm_blx:
+    if (STI->getTargetTriple().isOSBinFormatCOFF() && !IsResolved) {
+      if (Value != 0)
+        Ctx.reportError(Fixup.getLoc(),
+                        "cannot perform a PC-relative fixup with a non-zero "
+                        "symbol offset");
+      return 0;
+    }
     // Check that the relocation value is legal.
     Value -= 8;
     if (!isInt<26>(Value)) {
@@ -1385,8 +1392,9 @@ static MCAsmBackend *createARMAsmBackend(const Target &T,
   case Triple::MachO:
     return new ARMAsmBackendDarwin(T, STI, MRI);
   case Triple::COFF:
-    assert(TheTriple.isOSWindows() && "non-Windows ARM COFF is not supported");
-    return new ARMAsmBackendWinCOFF(T);
+    assert((TheTriple.isOSWindows() || TheTriple.isWinCE()) &&
+           "ARM COFF is only supported for Windows and Windows CE");
+    return new ARMAsmBackendWinCOFF(T, TheTriple.isWinCE());
   case Triple::ELF:
     assert(TheTriple.isOSBinFormatELF() && "using ELF for non-ELF target");
     uint8_t OSABI = Options.FDPIC

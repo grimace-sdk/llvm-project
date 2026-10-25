@@ -105,7 +105,7 @@ createARMMachObjectWriter(bool Is64Bit, uint32_t CPUType,
 
 /// Construct an ARM PE/COFF object writer.
 std::unique_ptr<MCObjectTargetWriter>
-createARMWinCOFFObjectWriter();
+createARMWinCOFFObjectWriter(bool WinCE = false);
 
 /// Construct ARM Mach-O relocation info.
 MCRelocationInfo *createARMMachORelocationInfo(MCContext &Ctx);

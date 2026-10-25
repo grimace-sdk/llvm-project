@@ -2760,6 +2760,11 @@ bool ARMExpandPseudo::ExpandMI(MachineBasicBlock &MBB,
         CPV = ARMConstantPoolConstant::Create(
             GV, ARMPCLabelIndex, ARMCP::CPValue, PCAdj, Modifier,
             /*AddCurrentAddr*/ Modifier == ARMCP::GOT_PREL);
+      } else if (Flags & ARMII::MO_DLLIMPORT) {
+        std::string ImportName =
+            ("__imp_" + MBB.getParent()->getTarget().getSymbol(GV)->getName())
+                .str();
+        CPV = ARMConstantPoolSymbol::Create(GV->getContext(), ImportName, 0, 0);
       } else
         CPV = ARMConstantPoolConstant::Create(GV, ARMCP::no_modifier);
 

@@ -25,9 +25,9 @@ namespace {
 
 class ARMWinCOFFObjectWriter : public MCWinCOFFObjectTargetWriter {
 public:
-  ARMWinCOFFObjectWriter()
-    : MCWinCOFFObjectTargetWriter(COFF::IMAGE_FILE_MACHINE_ARMNT) {
-  }
+  explicit ARMWinCOFFObjectWriter(bool WinCE)
+      : MCWinCOFFObjectTargetWriter(WinCE ? COFF::IMAGE_FILE_MACHINE_ARM
+                                          : COFF::IMAGE_FILE_MACHINE_ARMNT) {}
 
   ~ARMWinCOFFObjectWriter() override = default;
 
@@ -78,6 +78,13 @@ unsigned ARMWinCOFFObjectWriter::getRelocType(MCContext &Ctx,
     return COFF::IMAGE_REL_ARM_SECTION;
   case FK_SecRel_4:
     return COFF::IMAGE_REL_ARM_SECREL;
+  case ARM::fixup_arm_condbranch:
+  case ARM::fixup_arm_uncondbranch:
+  case ARM::fixup_arm_uncondbl:
+  case ARM::fixup_arm_condbl:
+    return COFF::IMAGE_REL_ARM_BRANCH24;
+  case ARM::fixup_arm_blx:
+    return COFF::IMAGE_REL_ARM_BLX24;
   case ARM::fixup_t2_condbranch:
     return COFF::IMAGE_REL_ARM_BRANCH20T;
   case ARM::fixup_t2_uncondbranch:
@@ -98,8 +105,8 @@ bool ARMWinCOFFObjectWriter::recordRelocation(const MCFixup &Fixup) const {
 namespace llvm {
 
 std::unique_ptr<MCObjectTargetWriter>
-createARMWinCOFFObjectWriter() {
-  return std::make_unique<ARMWinCOFFObjectWriter>();
+createARMWinCOFFObjectWriter(bool WinCE) {
+  return std::make_unique<ARMWinCOFFObjectWriter>(WinCE);
 }
 
 } // end namespace llvm

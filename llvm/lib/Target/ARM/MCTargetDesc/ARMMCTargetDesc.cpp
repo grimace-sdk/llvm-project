@@ -338,6 +338,8 @@ static MCAsmInfo *createARMMCAsmInfo(const MCRegisterInfo &MRI,
   MCAsmInfo *MAI;
   if (TheTriple.isOSDarwin() || TheTriple.isOSBinFormatMachO())
     MAI = new ARMMCAsmInfoDarwin(TheTriple, Options);
+  else if (TheTriple.isWinCE() && TheTriple.isOSBinFormatCOFF())
+    MAI = new ARMCOFFMCAsmInfoWinCE(Options);
   else if (TheTriple.isWindowsMSVCEnvironment())
     MAI = new ARMCOFFMCAsmInfoMicrosoft(Options);
   else if (TheTriple.isOSWindows())
