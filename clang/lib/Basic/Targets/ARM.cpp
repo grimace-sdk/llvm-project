@@ -311,7 +311,10 @@ ARMTargetInfo::ARMTargetInfo(const llvm::Triple &Triple,
   }
 
   // ARM targets default to using the ARM C++ ABI.
-  TheCXXABI.set(TargetCXXABI::GenericARM);
+  if (Triple.isWinCE() && Triple.isOSBinFormatCOFF())
+    TheCXXABI.set(TargetCXXABI::Microsoft);
+  else
+    TheCXXABI.set(TargetCXXABI::GenericARM);
 
   // ARM has atomics up to 8 bytes
   setAtomic();
