@@ -130,6 +130,8 @@ Triple ObjectFile::makeTriple() const {
     const auto COFFObj = cast<COFFObjectFile>(this);
     if (COFFObj->getArch() == Triple::thumb)
       TheTriple.setTriple("thumbv7-windows");
+    else if (COFFObj->getArch() == Triple::arm)
+      TheTriple.setTriple("armv4t-unknown-none-wincecoff");
   } else if (isXCOFF()) {
     // XCOFF implies AIX.
     TheTriple.setOS(Triple::AIX);

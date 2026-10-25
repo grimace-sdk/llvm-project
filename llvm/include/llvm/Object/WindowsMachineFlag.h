@@ -38,6 +38,9 @@ template <typename T> Triple::ArchType getMachineArchType(T machine) {
     return llvm::Triple::ArchType::x86;
   case COFF::IMAGE_FILE_MACHINE_AMD64:
     return llvm::Triple::ArchType::x86_64;
+  case COFF::IMAGE_FILE_MACHINE_ARM:
+  case COFF::IMAGE_FILE_MACHINE_THUMB:
+    return llvm::Triple::ArchType::arm;
   case COFF::IMAGE_FILE_MACHINE_ARMNT:
     return llvm::Triple::ArchType::thumb;
   case COFF::IMAGE_FILE_MACHINE_ARM64:
