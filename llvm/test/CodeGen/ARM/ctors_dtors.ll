@@ -2,6 +2,7 @@
 ; RUN: llc < %s -mtriple=arm-apple-darwin -disable-atexit-based-global-dtor-lowering  | FileCheck %s -check-prefix=DARWIN-LEGACY
 ; RUN: llc < %s -mtriple=arm-linux-gnu -target-abi=apcs  | FileCheck %s -check-prefix=ELF
 ; RUN: llc < %s -mtriple=arm-linux-gnueabi | FileCheck %s -check-prefix=GNUEABI
+; RUN: llc < %s -mtriple=armv4-unknown-none-wince | FileCheck %s -check-prefix=GNUEABI
 
 ; DARWIN: l_register_call_dtors:
 ; DARWIN: bl	___cxa_atexit

@@ -60,7 +60,7 @@ void ARMElfTargetObjectFile::getModuleMetadata(Module &M) {
 
   const auto &ARM_TM = static_cast<const ARMBaseTargetMachine &>(*TM);
   bool isAAPCS_ABI = ARM_TM.getEffectiveABI(M) == ARM::ARMABI::ARM_ABI_AAPCS;
-  InitializeELF(isAAPCS_ABI);
+  InitializeELF(isAAPCS_ABI || ARM_TM.getTargetTriple().isWinCE());
 
   if (isAAPCS_ABI)
     LSDASection = nullptr;
