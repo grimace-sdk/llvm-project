@@ -374,6 +374,9 @@ public:
       Features.push_back("+fp64");
     }
 
+    if (CPU == "mips1")
+      MaxAtomicInlineWidth = 0;
+
     resetDataLayout();
 
     return true;

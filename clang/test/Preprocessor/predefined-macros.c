@@ -132,6 +132,19 @@
 // CHECK-SYNC_CAS_MIPS: #define __GCC_HAVE_SYNC_COMPARE_AND_SWAP_4 1
 // CHECK-SYNC_CAS_MIPS32-NOT: __GCC_HAVE_SYNC_COMPARE_AND_SWAP_8
 // CHECK-SYNC_CAS_MIPS64: #define __GCC_HAVE_SYNC_COMPARE_AND_SWAP_8 1
+//
+// RUN: %clang_cc1 %s -E -dM -o - -triple mips -target-cpu mips1 \
+// RUN:   | FileCheck -match-full-lines %s --check-prefix=CHECK-LOCK_FREE_MIPS1
+// RUN: %clang_cc1 %s -E -dM -o - -triple mips -target-cpu mips2 \
+// RUN:   | FileCheck -match-full-lines %s --check-prefix=CHECK-LOCK_FREE_MIPS2
+// CHECK-LOCK_FREE_MIPS1: #define __CLANG_ATOMIC_CHAR_LOCK_FREE 1
+// CHECK-LOCK_FREE_MIPS1: #define __CLANG_ATOMIC_INT_LOCK_FREE 1
+// CHECK-LOCK_FREE_MIPS1: #define __CLANG_ATOMIC_POINTER_LOCK_FREE 1
+// CHECK-LOCK_FREE_MIPS1: #define __CLANG_ATOMIC_SHORT_LOCK_FREE 1
+// CHECK-LOCK_FREE_MIPS2: #define __CLANG_ATOMIC_CHAR_LOCK_FREE 2
+// CHECK-LOCK_FREE_MIPS2: #define __CLANG_ATOMIC_INT_LOCK_FREE 2
+// CHECK-LOCK_FREE_MIPS2: #define __CLANG_ATOMIC_POINTER_LOCK_FREE 2
+// CHECK-LOCK_FREE_MIPS2: #define __CLANG_ATOMIC_SHORT_LOCK_FREE 2
 
 // RUN: %clang_cc1 %s -E -dM -o - -x cl \
 // RUN:   | FileCheck -match-full-lines %s --check-prefix=CHECK-CL12
