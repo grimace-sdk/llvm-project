@@ -751,6 +751,8 @@ public:
   /// HasNonWeakDef is true, this concerns a VarDecl which has a definition
   /// in current translation unit and that is not weak.
   virtual unsigned getMinGlobalAlign(uint64_t Size, bool HasNonWeakDef) const {
+    if (getTriple().isWinCE() && Size >= 16)
+      return std::max<unsigned>(MinGlobalAlign, 32);
     return MinGlobalAlign;
   }
 
